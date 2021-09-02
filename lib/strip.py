@@ -35,12 +35,12 @@ def signal_handler(signal_, frame):
 
 # Convert string to array of tupples
 # Parameter s can be:
-#   abcdef 
-#   'abcdef' 
-#   "abcdef" 
+#   abcdef
+#   'abcdef'
+#   "abcdef"
 #   ("abcdef", 123)
-#   [("abcdef", 123)] 
-   
+#   [("abcdef", 123)]
+
 def toTuppleArray(s):
   if ((s[0] == '"') or (s[0] == "'")):
     s = "[(" + s + ")]";
@@ -89,10 +89,10 @@ class Artnet:
   length = 170;
 
   #                       01234567   8   9   a   b   c   d   e   f   10  11  
-  #                                  op-code protver seq phy universe len  
-  dataHeader = bytearray( b"Art-Net\x00\x00\x50\x00\x0e\x00\x00\x00\x00\x02\x00" )
+  #                                  op-code protver seq phy universe len
+  dataHeader = bytearray( b"Art-Net\x00\x00\x50\x00\x0e\x00\x00\x00\x00\x01\xc2" )
   #                    01234567   8   9   a   b   c   d
-  #                               op-code protver 
+  #                               op-code protver
   pollMsg = bytearray( b"Art-Net\x00\x00\x20\x00\x0e\x00\xff" );
 
   def __init__(self, addr_ = []):
@@ -148,7 +148,7 @@ class Artnet:
       data[3*i+0] = int( c[0] * self.fade )
       data[3*i+1] = int( c[1] * self.fade )
       data[3*i+2] = int( c[2] * self.fade )
-    for i in range(len(self.addr)):      
+    for i in range(len(self.addr)):
       self.sock.sendto( self.dataHeader + data, self.addr[i])
 
   # Run poll for 5 seconds.
@@ -185,7 +185,7 @@ class Strip:
     self.length = length;
     self.clear()
     self.artnet = Artnet(addr);
-    
+
     signal.signal(signal.SIGINT, signal_handler)
 
     global strip;
@@ -200,7 +200,7 @@ class Strip:
   # Send the data of myself to the strip
   def send(self):
     self.artnet.send(self);
-    
+
   # Clear the entire strip with one color (default: black).
   # Color is array: [r, g, b].
   def clear(self, color = [0, 0, 0]):
@@ -351,10 +351,10 @@ class Strip2D:
       for x in range(self.lenx):
         c = self.get(x, y);
         c = [int(c[0] * f), int(c[1] * f), int(c[2] * f)];
-      
+
         self.set(x, y, c);
         self.set(x, y, c);
-    
+
 
 
 #
@@ -364,7 +364,7 @@ class Strip2D:
 class Canvas:
   lenx = 0;
   leny = 0;
-  strip2D = 0; 
+  strip2D = 0;
 
   def __init__(self, lenx, leny):
     self.lenx = lenx;
@@ -419,7 +419,7 @@ class Effect(object):
   """
     You can either override the run method or the step method.
     If you override the run method you have to do everything yourself.
-    The step method is called repeatedly with a sleep of .02 
+    The step method is called repeatedly with a sleep of .02
     in between; the strip send method is called automatically.
   """
   def run(self, runtime = None ):
@@ -436,12 +436,12 @@ class Effect(object):
     now = time.time();
     self.init();
     while (not self.quit) and ((time.time() - now) < runtime):
-      self.step(self.count); 
+      self.step(self.count);
       self.count += 1;
       self.strip2D.send();
       time.sleep(0.02);
 
-  """ 
+  """
     init is called be a new sequence of steps is executed to reinitialize.
   """
   def init(self):
@@ -461,5 +461,3 @@ opcode  ip  .   .   .   port.   version
 
 
 """
-
-
